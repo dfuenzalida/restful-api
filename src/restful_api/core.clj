@@ -1,10 +1,8 @@
 (ns restful-api.core
-  (:require [clojure.data.json :as json]
-            [ring.adapter.jetty :as jetty])
+  (:require [clojure.data.json :as json])
   (:use [liberator.core :only [defresource wrap-trace-as-response-header request-method-in]]
-;;        [liberator.representation :only [Representation]]
         [ring.middleware.multipart-params :only [wrap-multipart-params]]
-        [compojure.core :only [context ANY routes defroutes]]
+        [compojure.core :only [context ANY routes]]
         [compojure.handler :only [api]]
         [clojure.tools.logging :only [info error]]))
 
@@ -52,13 +50,3 @@
      request)))
 
 (def handler (create-handler))
-
-(defn start [options]
-  (jetty/run-jetty
-   (fn [request]
-     ((create-handler) request))
-   (assoc options :join? false)))
-
-(defn -main
-  ([port] (start {:port (Integer/parseInt port)}))
-  ([] (-main "8000")))
