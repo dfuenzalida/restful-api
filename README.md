@@ -14,7 +14,7 @@ Then visit `http://0.0.0.0:8000/elements` on a browser to obtain a list of eleme
 ### List entries
 
 ```
-$ curl -i -H "Accept: text/plain" http://localhost:8000/elements  ; echo ""
+$ curl -H "Accept: text/plain" http://localhost:8000/elements  ; echo ""
 
 [{"hola":"hello"},{"bye":"adios"}]
 ```
@@ -22,12 +22,10 @@ $ curl -i -H "Accept: text/plain" http://localhost:8000/elements  ; echo ""
 ### Create an entry
 
 ```
-$ curl -i -X POST -H "Accept: application/json" "http://localhost:8000/elements?name=foo&value=ir+works"  ; echo ""
+$ curl -H "Content-type: application/json" http://localhost:8000/elements -X POST --data "{\"name\":\"foo\",\"value\":\"bar\"}"  ; echo ""
 
-[{"hola":"hello"},{"bye":"adios"},{"foo":"it works"}]
+[{"hola":"hello"},{"bye":"adios"},{"foo":"bar"}]
 ```
-
-
 
 ## License
 
