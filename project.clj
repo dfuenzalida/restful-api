@@ -7,7 +7,8 @@
                  [compojure "1.0.2"]
                  [ring/ring-jetty-adapter "1.1.0"]
                  [liberator "0.8.0"]
-                 [org.clojure/tools.logging "0.2.6"]]
+                 [org.clojure/tools.logging "0.2.6"]
+                 [ring/ring-json "0.2.0"]]
 
   :plugins [[lein-ring "0.7.1" :exclusions [org.clojure/clojure]]]
 

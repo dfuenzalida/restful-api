@@ -4,19 +4,21 @@
         [ring.middleware.multipart-params :only [wrap-multipart-params]]
         [compojure.core :only [context ANY routes]]
         [compojure.handler :only [api]]
+        [ring.middleware.json :only [wrap-json-body]]
         [clojure.tools.logging :only [info error]]))
 
 ;; IN-MEMORY DB: a list of random items
 
-(def database (atom [{:hola "hello"} {:bye "adios"}]))
+(def database (atom [{"hola" "hello"} {"bye" "adios"}]))
 
 ;; RESOURCES
 
 (defresource elements
   :method-allowed? (request-method-in :get :post)
   :post! (fn [context]
-           (let [name (get-in context [:request :params :name])
-                 value (get-in context [:request :params :value])]
+           (let [name (get-in context [:request :body "name"])
+                 value (get-in context [:request :body "value"])]
+             (info (get-in context [:request]))
              (info (str "Adding '" name "' -> '" value "'"))
              (swap! database conj {name value})))
   :handle-created (fn [_] (json/write-str @database))
@@ -36,7 +38,7 @@
 ;; CURL GET:
 ;; $ curl -i -H "Accept: text/plain" http://localhost:8000/elements  ; echo ""
 ;; CURL POST:
-;; $ curl -i -X POST -H "Accept: application/json" "http://localhost:8000/elements?name=foo&value=ir+works"  ; echo ""
+;; $ curl -i -X POST -H "Content-type: application/json" http://localhost:8000/elements --data "{\"name\":\"woody\",\"value\":\"cowboy\"}"  ; echo ""
 
 ;; TODO move all the functions below to a different file (server config)
 
@@ -46,6 +48,7 @@
      (->
       (assemble-routes)
       api
+      wrap-json-body
       wrap-multipart-params)
      request)))
 
