@@ -1,5 +1,6 @@
 (ns restful-api.core
-  (:require [clojure.data.json :as json])
+  (:require [clojure.data.json :as json]
+            [restful-api.products :as products])
   (:use [liberator.core :only [defresource wrap-trace-as-response-header request-method-in]]
         [ring.middleware.multipart-params :only [wrap-multipart-params]]
         [compojure.core :only [context ANY routes]]
@@ -25,12 +26,18 @@
   :handle-ok (fn [_] (json/write-str @database))
   :available-media-types ["text/plain", "application/json"])
 
+(defresource products
+  :method-allowed? (request-method-in :get)
+  :handle-ok (fn [_] (json/write-str (products/get-products)))
+  :available-media-types ["text/plain", "application/json"])
+
 ;; ROUTES
 
 (defn assemble-routes []
   (->
    (routes
-    (ANY "/elements" [] elements))
+    (ANY "/elements" [] elements)
+    (ANY "/products" [] products))
    (wrap-trace-as-response-header))) ;; See debug output on HTTP headers
 
 ;; TESTING:
