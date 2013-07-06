@@ -37,13 +37,21 @@
   :handle-ok (fn [_] (json/write-str (models/get-manufacturers)))
   :available-media-types ["text/plain", "application/json"])
 
+(defresource manufacturer-by-id [mid]
+  :method-allowed? (request-method-in :get)
+  :handle-ok (fn [_]
+               (json/write-str
+                (first (filter #(= mid (str (:id %))) (models/get-manufacturers)))))
+  :available-media-types ["text/plain", "application/json"])
+
 ;; ROUTES
 
 (defn assemble-routes []
   (->
    (routes
     (ANY "/elements" [] elements)
-    (ANY "/manufacturers" [] manufacturers))
+    (ANY "/manufacturers" [] manufacturers)
+    (ANY "/manufacturers/:id" [id] (manufacturer-by-id id)))
    (wrap-trace-as-response-header))) ;; See debug output on HTTP headers
 
 ;; TESTING:
